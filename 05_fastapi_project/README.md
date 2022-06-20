@@ -34,3 +34,17 @@ uvicorn main:app --reload
 
 - pip3 install jinja2
 - pip3 install aiofiles
+
+# DB 연결
+
+1. 시크릿 변수 설정
+2. odmantic을 사용하여 fast api와 연결
+    - odm(obejct document mapper)
+    - 파이썬과 MongoDb의 중개자 역할이 ODM
+    - 파이썬 버전 3.6이상 MongoDB 버전 4.0이상 지원
+    - pip3 install odmantic
+    - [ODM_doc](https://art049.github.io/odmantic/)
+    - pip3 install "pymongo[srv]"
+3. models 디렉토리를 사용하여 추상화
+4. book 모델 개발
+5. db에 insert
