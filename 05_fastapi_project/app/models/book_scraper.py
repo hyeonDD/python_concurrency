@@ -1,6 +1,6 @@
 import asyncio
 import aiohttp
-from app.config import NAVER_API_ID,NAVER_API_SECRET
+from config import NAVER_API_ID,NAVER_API_SECRET
 
 class NaverBookScraper:
 
