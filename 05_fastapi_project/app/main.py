@@ -1,5 +1,3 @@
-from ast import keyword
-import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -37,7 +35,18 @@ async def search(request: Request,q: str):
     keyword = q
     # (예외처리)
     #  - 검색어가 없다면 사용자에게 검색을 요구 return
+    if not keyword:
+        return templates.TemplateResponse(
+        "./index.html",
+        {"request": request,"title": "콜렉터 북북이"},
+    )
     #  - 해당 검색어에 대해 수집된 데이터가 이미 DB에 존재한다면 해당 데이터를 사용자에게 보여준다. return
+    if await mongodb.engine.find_one(BookModel, BookModel.keyword == keyword):
+        # 키워드에 대해 수집된 데이터가 DB에 존재한다면 해당 데이터를 사용자에게 보여준다.
+        books = await mongodb.engine.find(BookModel, BookModel.keyword == keyword)
+        context = {"request": request, "keyword": keyword, "books": books}
+        return templates.TemplateResponse("index.html", context=context)
+
     # 2. 데이터 수집기로 해당 검색어에 대해 데이터를 수집한다.
     naver_book_scraper = NaverBookScraper()
     books = await naver_book_scraper.search(keyword,10) # search는 async 함수이므로 await 즉 웨이팅이 필요
@@ -58,7 +67,7 @@ async def search(request: Request,q: str):
 
     return templates.TemplateResponse(
         "./index.html",
-        {"request": request,"title": "콜렉터 북북이"}
+        {"request": request,"title": "콜렉터 북북이", "books" : books}
     )
 
 @app.on_event("startup")
